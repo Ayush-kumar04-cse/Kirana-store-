@@ -1,24 +1,27 @@
-// 1. Declare state at the top of app.js
-const state = {
-    role: 'client', // default role: 'client' or 'shopkeeper'
+window.state = {
+    role: 'client',
     user: null,
     location: { lat: 0, lng: 0 }
 };
 
-// Function to handle role switching
 window.setRole = function(role) {
-    state.role = role;
+    window.state.role = role;
+    
+    const clientBtn = document.getElementById('btnRoleClient');
+    const shopBtn = document.getElementById('btnRoleShopkeeper');
     const shopNameContainer = document.getElementById('shopNameContainer');
-    if (shopNameContainer) {
-        if (role === 'shopkeeper') {
-            shopNameContainer.classList.remove('hidden');
-        } else {
-            shopNameContainer.classList.add('hidden');
-        }
+
+    if (role === 'shopkeeper') {
+        if (shopNameContainer) shopNameContainer.classList.remove('hidden');
+        if (shopBtn) shopBtn.className = "flex-1 py-2 text-center text-sm font-semibold rounded-md bg-indigo-600 text-white transition";
+        if (clientBtn) clientBtn.className = "flex-1 py-2 text-center text-sm font-semibold rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition";
+    } else {
+        if (shopNameContainer) shopNameContainer.classList.add('hidden');
+        if (clientBtn) clientBtn.className = "flex-1 py-2 text-center text-sm font-semibold rounded-md bg-indigo-600 text-white transition";
+        if (shopBtn) shopBtn.className = "flex-1 py-2 text-center text-sm font-semibold rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition";
     }
 };
 
-// 2. Attach loginUser to window so onclick="loginUser()" works
 window.loginUser = async function() {
     const phoneInput = document.getElementById('inputPhone');
     const shopNameInput = document.getElementById('inputShopName');
@@ -27,34 +30,46 @@ window.loginUser = async function() {
     const shopName = shopNameInput ? shopNameInput.value.trim() : '';
 
     if (phone.length !== 10) return alert("Please enter a valid 10-digit mobile number.");
-    if (state.role === 'shopkeeper' && !shopName) return alert("Please enter your shop name.");
+    if (window.state.role === 'shopkeeper' && !shopName) return alert("Please enter your shop name.");
 
-    state.user = { phone, role: state.role, shopName };
-    localStorage.setItem('user_session', JSON.stringify(state.user));
+    window.state.user = { phone, role: window.state.role, shopName };
+    localStorage.setItem('user_session', JSON.stringify(window.state.user));
 
     try {
         if (window.backend && typeof window.backend.saveUser === 'function') {
-            await window.backend.saveUser(phone, state.role, shopName, state.location.lat, state.location.lng);
+            await window.backend.saveUser(phone, window.state.role, shopName, window.state.location.lat, window.state.location.lng);
         }
     } catch (err) {
         console.warn("Backend sync skipped:", err);
     }
 
-    // Hide login screen & show app view
     const authScreen = document.getElementById('authScreen');
     const mainApp = document.getElementById('mainApp');
     
     if (authScreen) authScreen.classList.add('hidden');
     if (mainApp) mainApp.classList.remove('hidden');
+
+    const appHeaderTitle = document.getElementById('appHeaderTitle');
+    if (appHeaderTitle) {
+        appHeaderTitle.textContent = window.state.role === 'shopkeeper' ? shopName : 'Client Dashboard';
+    }
 };
 
-// Geolocation initialization
+window.logout = function() {
+    localStorage.removeItem('user_session');
+    window.state.user = null;
+    const authScreen = document.getElementById('authScreen');
+    const mainApp = document.getElementById('mainApp');
+    if (mainApp) mainApp.classList.add('hidden');
+    if (authScreen) authScreen.classList.remove('hidden');
+};
+
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
         (pos) => {
-            state.location.lat = pos.coords.latitude;
-            state.location.lng = pos.coords.longitude;
+            window.state.location.lat = pos.coords.latitude;
+            window.state.location.lng = pos.coords.longitude;
         },
-        (err) => console.warn("Geolocation permission denied or unavailable.")
+        (err) => console.warn("Geolocation skipped or denied.")
     );
 }
