@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirana Store Direct - Multi-Store Platform</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- Mobile Application Container -->
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-xl flex flex-col justify-between relative pb-16">
+        
+        <!-- ================= AUTHENTICATION SCREEN ================= -->
+        <div id="authScreen" class="p-6 flex flex-col justify-center min-h-screen">
+            <div class="text-center mb-6">
+                <div class="bg-green-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl font-bold shadow-lg">
+                    🏪
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">Kirana Store Direct</h1>
+                <p class="text-xs text-gray-500 mt-1">Connect directly with local kirana shops</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Role Selector -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Select Account Type</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="selectRole('client')" id="btnRoleClient" class="py-2 border text-xs font-bold rounded-lg border-green-600 text-green-600 bg-green-50">
+                            Client / Customer
+                        </button>
+                        <button type="button" onclick="selectRole('shopkeeper')" id="btnRoleShop" class="py-2 border text-xs font-bold text-gray-500 rounded-lg border-gray-200">
+                            Shopkeeper
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Phone Input -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Mobile Number</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-xs text-gray-500 bg-gray-100 border border-r-0 rounded-l-md">+91</span>
+                        <input type="tel" id="inputPhone" placeholder="9876543210" maxlength="10" class="w-full px-3 py-2 border text-sm rounded-r-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+
+                <!-- Shop Name (Only visible when Shopkeeper role is active) -->
+                <div id="shopNameContainer" class="hidden">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Store / Shop Name</label>
+                    <input type="text" id="inputShopName" placeholder="e.g. Gupta General Store" class="w-full px-3 py-2 border text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="loginUser()" class="w-full bg-green-600 text-white py-2.5 rounded-lg text-xs font-bold shadow hover:bg-green-700 transition">
+                    Verify & Enter Store
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= MAIN DASHBOARD SCREEN ================= -->
+        <div id="mainScreen" class="hidden">
+            <!-- Header Bar -->
+            <header class="sticky top-0 z-40 bg-green-600 text-white p-4 shadow-md flex justify-between items-center">
+                <div>
+                    <h2 id="headerTitle" class="text-sm font-bold">Store Directory</h2>
+                    <p id="headerSub" class="text-[10px] text-green-100">Scanning GPS location...</p>
+                </div>
+                <button onclick="logout()" class="text-xs bg-green-800 px-2.5 py-1 rounded border border-green-500 hover:bg-green-900 transition">
+                    Sign Out
+                </button>
+            </header>
+
+            <!-- Dynamic UI Content -->
+            <main id="viewArea" class="p-4">
+                <!-- Dynamically rendered by app.js -->
+            </main>
+        </div>
+
+    </div>
+
+    <!-- Firebase Modular SDK Script (Type Module) -->
+    <script type="module" src="firebase-config.js"></script>
+    <!-- Frontend Controller Script -->
+    <script src="app.js"></script>
+</body>
+</html>
